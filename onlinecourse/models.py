@@ -10,6 +10,8 @@ from django.conf import settings
 import uuid
 
 
+
+
 # Instructor model
 class Instructor(models.Model):
     user = models.ForeignKey(
@@ -101,6 +103,10 @@ class Enrollment(models.Model):
     # Has a grade point for each question
     # Has question content
     # Other fields and methods you would like to design
+class Question(models.Model):
+    lessons=models.ForeignKey(Lesson)
+    question=models.CharField(max=100,null=False)
+    grade=models.IntegerField(min=0;null=True)
 #class Question(models.Model):
     # Foreign key to lesson
     # question text
@@ -122,8 +128,8 @@ class Enrollment(models.Model):
     # Choice content
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
-# class Choice(models.Model):
-
+class Choice(models.Model):
+    qustions =models.ForeignKey(Question,on_delete=models.CASCADE)
 # <HINT> The submission model
 # One enrollment could have multiple submission
 # One submission could have multiple choices
