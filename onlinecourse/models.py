@@ -104,7 +104,7 @@ class Enrollment(models.Model):
     # Has question content
     # Other fields and methods you would like to design
 class Question(models.Model):
-    lesson_id=models.ForeignKey(Lesson,on_delete=models.CASCADE)
+    lesson_id = models.ForeignKey(Course, on_delete=models.CASCADE)
     question_text=models.CharField(max_length=200,null=False)
     grade=models.IntegerField(null=True)
 #class Question(models.Model):
@@ -129,7 +129,7 @@ def is_get_score(self, selected_ids):
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
 class Choice(models.Model):
-    qustions_id=models.ForeignKey(Question,on_delete=models.CASCADE)
+    qustions_id=models.ForeignKey(Question,on_delete=models.CASCADE,default='')
     choice_text=models.CharField(max_length=200)
     is_correct=models.BooleanField()
 # <HINT> The submission model
