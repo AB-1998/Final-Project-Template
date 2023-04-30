@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.views import generic
 from django.contrib.auth import login, logout, authenticate
 import logging
+from .models import Course, Enrollment, Question, Choice, Submission
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 # Create your views here.
@@ -110,7 +112,12 @@ def enroll(request, course_id):
          # Collect the selected choices from exam form
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
-#def submit(request, course_id):
+def submit(request, course_id):
+    user=request.user
+    course=get_object_or_404(Course, pk=course_id)
+    enroll = Enrollment.objects.get(user=user, course=course)
+    Submission.objects.create(enrollment=enroll)
+
 
 
 # <HINT> A example method to collect the selected choices from the exam form from the request object
@@ -130,7 +137,12 @@ def extract_answers(request):
         # Get the selected choice ids from the submission record
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
-#def show_exam_result(request, course_id, submission_id):
+def show_exam_result(request, course_id, submission_id):
+    grade =[]
+    course=get_object_or_404(Course, pk=course_id)
+    submition=get_object_or_404(Submission, pk=submission_id)
+    for key in submition:
+
 
 
 
