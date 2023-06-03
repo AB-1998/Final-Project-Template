@@ -113,12 +113,16 @@ def enroll(request, course_id):
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
 def submit(request, course_id):
+    Choicess=[]
     user=request.user
     course=get_object_or_404(Course, pk=course_id)
     enroll = Enrollment.objects.get(user=user, course=course)
+    f=Submission.objects.create(enrollment=enroll)
     thee_choices=extract_answers(request)
-    submission_id=Submission.objects.create(enrollment=enroll,chocies=thee_choices) 
-    return HttpResponseRedirect(viewname='onlinecourse:show_exam_result',args=(submission_id.id))
+    f.choices.set(thee_choices)
+    f.save()
+    
+    return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result',args=(course_id,f.pk)) )
 
 
 
@@ -140,13 +144,23 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    grade =0
-    course=get_object_or_404(Course, pk=course_id)
-    submition=get_object_or_404(Submission, pk=submission_id)
-    for key in submition.choices:
-        if key.is_correct ==1 :
-            grade=+1
-    return grade
+    course = get_object_or_404(Course, pk=course_id)
+    submission = get_object_or_404(Submission, pk=submission_id)
+    choices = submission.choices.all()
+    total_mark, mark = 0, 0
+    for question in course.question_set.all():
+        total_mark += question.grade
+        if question.is_get_score(choices):
+            mark += question.grade
+    
+    return render(
+        request,
+        'onlinecourse/exam_result_bootstrap.html',
+        {"course":course, "choices":choices,"mark":mark, 
+            "total_mark": total_mark, 
+            "submission": submission,
+            "grade": int((mark / total_mark) * 100) }
+    )
 
 
 

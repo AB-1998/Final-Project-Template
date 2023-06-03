@@ -38,36 +38,37 @@
 <div class="container-fluid">
     {% if grade > 80 %}
     <div class="alert alert-success">
-       <h1>good you pass with {{grade}/10</h1>
+        <b> Congratulations, {{user.name}} ! </b> You have passed the exam and completed
     </div>
         {% else %}
         <div class="alert alert-danger">
-            <h1>not good you have grade {{grade}/10</h1>
+            <b> Failed ! </b>Sorry, {{user.name}} ! You have failed with score  {{mark}} /{{total_mark}}
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
             <!--HINT Display exam results-->
-            {% for question in course.question_set.all%}
-                            <div class="card mt-1">
-                                <div class="card-header"><h5>{{ question.question_text}}</h5></div>
-                                {% csrf_token %}
-                                <div class="form-group">
-                                   {% for choice in Submission.choices_set.all%}
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <h1 class="form-check-input"
-                                                   >correct : {{ question.Choice_set.is_correct }}</h1>
-                                            <h1 class="form-check-input"
-                                                   >{{ choice.choice_text }}</h1>
-
-                                        </label>
-                                    </div>
-                                    {%endfor%}
-                                </div>
-                            </div>
-                            {%endfor%}
+            {% for question in course.question_set.all %}
+            <div class="card">
+                <div class="card-header border-light">
+                    <h5>{{question.question}}</h5>
+                </div>
+                <div class="card-body">
+                    {% for choice in question.choice_set.all %}
+                       {% if choice.is_correct and choice in choices %}
+                        <p class="card-text" style="color:green">Correct answer: {{choice.content}}</p>
+                        {% elif choice.is_correct and choice not in choices %}
+                        <p class="card-text" style="color:orange">Not selected: {{choice.content}}</p>
+                        {% elif choice.is_correct == False and choice in choices %}
+                        <p class="card-text" style="color:red">Wrong answer: {{choice.content}}</p>
+                        {% else %}
+                        <p class="card-text" style="color:black">{{choice.content}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
         </div>
     </div>
 </body>
